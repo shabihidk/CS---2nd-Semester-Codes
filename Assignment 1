@@ -1,0 +1,161 @@
+#include <iostream> //i used this for cin cout basic functions
+#include <random> // used for random to randomly generate where the snakes do spawn on the array
+#include <cstdlib> // used this for system clear screen (visual effects)
+#include <windows.h> // used this for sleep function (visual effects too)
+#include <conio.h> // for getch()
+
+using namespace std;
+// Question 1: 
+struct UniverseCoordinate {
+    int s_position, x_position, y_position;
+    bool is_snake;	
+};
+
+void Display(UniverseCoordinate** UniverseData, int size) 
+{
+    for (int z = 0; z < size; z++) {
+        for (int t = 0; t < size; t++) {
+            cout << "|  ";
+            if (UniverseData[z][t].is_snake) {
+                cout << "Snake #" << UniverseData[z][t].s_position;
+             
+            } else {
+                cout << "        ";  
+            }
+            cout << "  | ";
+        }
+        cout << endl;
+    }
+}
+
+UniverseCoordinate** ResizeUniverse(UniverseCoordinate** oldUniverse, int oldSize, int newSize, int &w) 
+{
+
+    UniverseCoordinate** newUniverse = new UniverseCoordinate*[newSize];
+    for (int i = 0; i < newSize; ++i) {
+        newUniverse[i] = new UniverseCoordinate[newSize];
+    }
+
+    
+    for (int i = 0; i < oldSize; ++i) {
+        for (int j = 0; j < oldSize; ++j) {
+            newUniverse[i][j] = oldUniverse[i][j];
+        }
+    }
+
+    for (int i = oldSize; i < newSize; ++i) {
+        for (int j = 0; j < newSize - 1 ; ++j) {
+            int temp = rand() % 10;
+            if (temp < 6) {
+                newUniverse[i][j].is_snake = true;
+                newUniverse[i][j].s_position = w++;
+            } else {
+                newUniverse[i][j].is_snake = false;
+                newUniverse[i][j].s_position = 0;
+            }
+            newUniverse[i][j].x_position = j;
+            newUniverse[i][j].y_position = i;
+        }
+    }
+
+    for (int i = 0; i < oldSize; ++i) {
+        for (int j = oldSize; j < newSize; ++j) {
+            int temp = rand() % 10;
+            if (temp < 6) {
+                newUniverse[i][j].is_snake = true;
+                newUniverse[i][j].s_position = w++;
+            } else {
+                newUniverse[i][j].is_snake = false;
+                newUniverse[i][j].s_position = 0;
+            }
+            newUniverse[i][j].x_position = j;
+            newUniverse[i][j].y_position = i;
+        }
+    }
+
+    for (int i = 0; i < oldSize; ++i) {
+        delete[] oldUniverse[i];
+    }
+    delete[] oldUniverse;
+
+    return newUniverse;  
+}
+
+int main() {
+    int size, temp, w = 0;
+    char lol;
+    bool search = true; 
+    cout << "Enter Initial Size\n";
+    cin >> size;
+
+    system("cls");
+
+    
+    UniverseCoordinate** UniverseData = new UniverseCoordinate*[size];
+    for (int x = 0; x < size; ++x) {
+        UniverseData[x] = new UniverseCoordinate[size];
+    }
+
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            temp = rand() % 10;
+            if (temp < 6) 
+            {
+                UniverseData[i][j].is_snake = true;
+                UniverseData[i][j].s_position = w++;
+            } else {
+                UniverseData[i][j].is_snake = false;
+                UniverseData[i][j].s_position = 0;
+            }
+            UniverseData[i][j].x_position = j;
+            UniverseData[i][j].y_position = i;
+        }
+    }
+
+    while (search == true) 
+    {
+        system("cls");
+        cout << "Updating";
+        Sleep(1000);
+        system("cls");
+        cout << "Updating.";
+        Sleep(1000);
+        system("cls");
+        cout << "Updating..";
+        Sleep(1000);
+        system("cls");
+        cout << "Updating...";
+        Sleep(1000);
+        system("cls");
+
+        Display(UniverseData, size);
+
+         cout << endl << "Do you want to continue search and expand the universe? (Y/N)\n";
+        lol = _getch(); 
+        
+        cout << lol << endl;  
+        
+        if (lol == 'N' || lol == 'n') {
+            search = false;
+        } 
+        else if (lol == 'Y' || lol == 'y') 
+        {  
+            int newSize = size + 1;
+            UniverseData = ResizeUniverse(UniverseData, size, newSize, w);
+            size = newSize;
+        }
+    }
+
+
+    cout << endl;
+    cout << "Search Complete!...";
+
+    for (int x = 0; x < size; ++x) 
+    {
+        delete[] UniverseData[x];
+    }
+
+    delete[] UniverseData;
+
+    return 0;
+}
